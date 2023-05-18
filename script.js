@@ -1,7 +1,7 @@
 $("#app").load("/template/nav.html");
 
 function getTextFilesFromFolder() {
-  const folderPath = "posts/";
+  const folderPath = "/posts/";
   const textFiles = [];
 
   $.ajax({
