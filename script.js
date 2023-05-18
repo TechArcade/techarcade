@@ -3,8 +3,8 @@ $("#app").load("/template/nav.html");
 function getTextFilesFromFolder() {
   const folderPath = "/posts/";
   const textFiles = [];
-
-  for (let i = 0; i <= 4; i++) {
+  const q = 5;
+  for (let i = 0; i < q; i++) {
     const href =
       "https://raw.githubusercontent.com/TechArcade/techarcade.github.io/main/posts/" +
       i +
@@ -100,9 +100,9 @@ function Post(e) {
   const post =
     '<div class="col-md-4 "><div class="card mb-4 box-shadow"><img  class="card-img-top" src="' +
     e.img +
-    '" alt="Thumbnail [100%x225]" style="height: 225px; width: 100%; display: block" src=""    data-holder-rendered="true"/><div class="card-body"><p class="card-title">' +
+    '" alt="Thumbnail [100%x225]" style="height: 225px; width: 100%; display: block" src=""    data-holder-rendered="true"/><div class="card-body"><h5 class="card-title">' +
     e.title +
-    '</p><p class="card-text resume">' +
+    '</h5><p class="card-text resume">' +
     e.resume +
     '</p><div class="d-flex justify-content-between align-items-center"><div  class="text-white font-weight-bold">Continue reading...</div> <small class="text-muted">' +
     e.category +
@@ -130,9 +130,9 @@ function Highlight(e) {
   const template =
     '<div class="col-md-6 ">  <div class="card flex-md-row mb-4 box-shadow h-md-250 ">    <div class="card-body d-flex flex-column align-items-start">      <strong class="d-inline-block mb-2 text-primary">' +
     e.category +
-    '</strong>      <h3 class="mb-0">        <a class="text-dark" href="#">' +
+    '</strong>      <h5 class="mb-0">        <a class="text-dark" href="#">' +
     e.title +
-    '</a>      </h3>      <div class="mb-1 text-muted">Nov 12</div>      <p class="card-text mb-auto resume">' +
+    '</a>      </h5>      <div class="mb-1 text-muted">Nov 12</div>      <p class="card-text mb-auto resume">' +
     e.resume +
     '</p>      <a >Continue reading</a>    </div>    <img      class="card-img-right flex-auto d-none d-md-block"      data-src="holder.js/200x250?theme=thumb"      alt="Thumbnail [200x250]"      style="width: 200px; height: 250px"      src="' +
     e.img +
