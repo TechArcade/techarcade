@@ -4,6 +4,31 @@ function getTextFilesFromFolder() {
   const folderPath = "/posts/";
   const textFiles = [];
 
+  for (let i = 0; i <= 4; i++) {
+    const href =
+      "https://raw.githubusercontent.com/TechArcade/techarcade.github.io/main/posts/" +
+      i +
+      ".txt";
+    if (href.endsWith(".txt")) {
+      const filePath = href;
+      console.log(href);
+      // Fetch the text file
+      $.get(filePath, function (text) {
+        textFiles.push(text);
+
+        if (i == q - 1) {
+          postList = extractHTMLInfo(textFiles);
+          console.log(postList);
+          Featured(postList[0]);
+          Highlight(postList[1]);
+          Highlight(postList[2]);
+          loadPosts(postList);
+        }
+      });
+    }
+  }
+
+  /*
   $.ajax({
     url: folderPath,
     success: function (data) {
@@ -33,7 +58,7 @@ function getTextFilesFromFolder() {
     error: function (error) {
       console.error("Error loading folder:", error);
     },
-  });
+  });*/
 
   return textFiles;
 }
