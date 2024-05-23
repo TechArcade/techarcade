@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post Manager</title>
+  <script type="text/javascript" src="js/posts.json"></script>
+
+  <style>
+    body {}
+
+    #categorylist,
+    #selectedlist {
+      list-style-type: none;
+      padding: 0;
+      display: flex;
+    }
+
+    #categorylist li,
+    #selectedlist li {
+      background: white;
+      padding: 5px;
+
+    }
+
+    #horizontal {
+      display: flex;
+    }
+
+    #post-list {
+      width: 20%;
+      border-right: 1px solid #ccc;
+    }
+
+    #post-content {
+      flex: 1;
+      padding: 10px;
+    }
+
+    #add-post {
+      margin: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <ul id="categorylist">
+    <!-- Categories will be generated here -->
+  </ul>
+
+  <ul id="selectedlist" class="selected">
+
+  </ul>
+
+  <div id="nav-top">
+    <button id="add-post">Add Post</button>
+    <button id="save" onclick="save()">save</button>
+    <input type="text" id="categoryInput">
+  </div>
+  <div id="horizontal">
+
+    <div id="post-list">
+
+    </div>
+
+    <div id="post-content">
+      <textarea id="textarea" rows="20" cols="50"></textarea>
+
+    </div>
+    <button id="expand">></button>
+    <div id="markdown">
+
+    </div>
+  </div>
+  <script>
+
+    function savePosts() {
+      var data = JSON.stringify(posts, null, 2);
+      var data2 = JSON.stringify(selectedCategories, null, 2);
+      var blob = new Blob(["var posts = " + data + "; var tabs = " + data2 + ";"], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'posts.json';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }, 0);
+    }
+
+    var selectedCategories = tabs;
+    loadTabs();
+    function loadTabs() {
+      selectedCategories.forEach(category => {
+        addCategory(category);
+      });
+    }
+
+    function generateCategoryList() {
+      categorylist.innerHTML = '';
+      const categoryList = document.getElementById('categorylist');
+      existingCategories.forEach(category => {
+        const listItem = document.createElement('li');
+        listItem.textContent = category;
+        listItem.onclick = () => addCategory(category);
+
+        const pButton = document.createElement('button');
+        pButton.textContent = 'P';
+        pButton.onclick = (event) => {
+          event.stopPropagation();
+          document.getElementById('categoryInput').value = category;
+        };
+
+        listItem.appendChild(pButton);
+        categoryList.appendChild(listItem);
+      });
+    }
+
+    function addCategory(category) {
+      const selectedList = document.getElementById('selectedlist');
+      const items = selectedList.getElementsByTagName('li');
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].textContent.includes(category)) {
+          return; // Category already exists in the selected list
+        }
+      }
+
+      const newCategory = document.createElement('li');
+      newCategory.textContent = category;
+
+      const moveUpButton = document.createElement('button');
+      moveUpButton.textContent = '<';
+      moveUpButton.onclick = function (event) {
+        event.stopPropagation();
+        const prev = newCategory.previousElementSibling;
+        if (prev) {
+          selectedList.insertBefore(newCategory, prev);
+        }
+      };
+
+      const moveDownButton = document.createElement('button');
+      moveDownButton.textContent = '>';
+      moveDownButton.onclick = function (event) {
+        event.stopPropagation();
+        const next = newCategory.nextElementSibling;
+        if (next) {
+          selectedList.insertBefore(next, newCategory);
+        }
+      };
+
+      newCategory.appendChild(moveUpButton);
+      newCategory.appendChild(moveDownButton);
+      newCategory.onclick = function () {
+        selectedList.removeChild(newCategory);
+      };
+
+      selectedList.appendChild(newCategory);
+    }
+
+
+
+    var jsonPosts = [
+      "> Category1, Category2\n# Title 1\nContent for the first post.",
+      "> Category3, Category4\n# Title 2\nContent for the second post.",
+      "> Category5\n# Title 3\nContent for the third post."
+    ];
+
+
+
+    var currentIndex = null;
+    var existingCategories = [];
+
+    // Get elements
+    var postList = document.getElementById('post-list');
+    var textarea = document.getElementById('textarea');
+    var addPostButton = document.getElementById('add-post');
+    var categList = document.getElementById('categ-list');
+
+    var search = '';
+
+    // Function to extract title
+    function extractTitle(post) {
+      var lines = post.split('\n');
+      var titleLine = lines.find(line => line.trim().startsWith('#'));
+      return titleLine ? titleLine.substring(1).trim() : 'Untitled';
+    }
+
+    function extractCategories1(post) {
+      var lines = post.split('\n');
+      var titleLine = lines.find(line => line.trim().startsWith('######'));
+      if (titleLine) {
+        titleLine = titleLine.substring(1).trim();
+
+        var rawCategories = titleLine.split(',');
+        var categories = [];
+        rawCategories.forEach(function (category) {
+          var trimmedCategory = category.trim();
+          if (trimmedCategory && !existingCategories.includes(trimmedCategory)) {
+            categories.push(trimmedCategory);
+            existingCategories.push(trimmedCategory);
+          }
+        });
+        return categories;
+      }
+      return [];
+    }
+
+
+    // Function to update post list
+    function updatePostList() {
+      existingCategories = [];
+      postList.innerHTML = '';
+      posts.forEach(function (post, index) {
+
+        var newCategories = extractCategories1(post);
+
+        if (search == '' || newCategories.findIndex(element => {
+          return element.toLowerCase() == search;
+        }) > -1) {
+          var title = extractTitle(post);
+
+          var postElement = document.createElement('div');
+          postElement.innerText = title;
+          postElement.style.cursor = 'pointer';
+          postElement.style.padding = '5px';
+          postElement.style.borderBottom = '1px solid #ccc';
+
+          postElement.addEventListener('click', function () {
+            textarea.value = posts[index];
+            currentIndex = index;
+          });
+
+
+
+          postList.appendChild(postElement);
+
+        }
+
+
+      });
+
+
+
+      generateCategoryList();
+    }
+
+    // Initial population of post list
+    updatePostList();
+
+    // Event listener for textarea content change
+    textarea.addEventListener('input', function () {
+      if (currentIndex !== null) {
+        posts[currentIndex] = textarea.value;
+        updatePostList();
+      }
+    });
+
+    // Function to add a new empty post
+    function addNewPost() {
+      var newPost = '# Category\n# Title\nContent';
+      posts.push(newPost);
+      updatePostList();
+    }
+
+
+    document.getElementById('categoryInput').addEventListener('input', function () {
+      search = document.getElementById('categoryInput').value.toLowerCase();
+
+      updatePostList();
+    });
+
+    // Event listener for add post button
+    addPostButton.addEventListener('click', function () {
+      addNewPost();
+
+    });
+
+    function saveCategories() {
+
+      const selectedList = document.getElementById('selectedlist');
+      const items = selectedList.getElementsByTagName('li');
+      selectedCategories = [];
+      for (let i = 0; i < items.length; i++) {
+        selectedCategories.push(items[i].textContent.replace('<>', '').trim());
+      }
+      return selectedCategories;
+    }
+
+    function save() {
+      saveCategories();
+      savePosts();
+
+    }
+
+  </script>
+</body>
+
+</html>

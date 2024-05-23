@@ -14,13 +14,69 @@
       href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;600;700&family=Open+Sans:wght@300;400;600;800&family=Outfit:wght@400;600;700;800;900&family=Quicksand:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-
+    <script type="text/javascript" src="js/posts.json"></script>
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link href="style.css" rel="stylesheet" />
+    
   </head>
   <body>
-    <div id="app"></div>
 
+    <div id="app">
+
+      <div class="container">
+        <header class="blog-header py-3">
+          <div class="row flex-nowrap justify-content-between align-items-center">
+            <div class="text-center col-12">
+              <a class="logo text-dark" href="#">Tech Arcade</a>
+            </div>
+          </div>
+        </header>
+      
+        <div class="nav-scroller py-1 mb-2">
+          <nav class="nav d-flex justify-content-between">
+            <a class="p-2 text-muted" href="#" onclick="toggleElements(event, -1)"
+              >Home</a
+            >
+            <a class="p-2 text-muted" href="#" onclick="toggleElements(event, -2)"
+              >Ideas</a
+            >
+            <a class="p-2 text-muted" href="#" onclick="toggleElements(event, -3)"
+              >Games</a
+            >
+            <a class="p-2 text-muted" href="#" onclick="toggleElements(event, -4)"
+              >Technology</a
+            >
+          </nav>
+        </div>
+      </div>
+      <div class="container" id="home">
+        <div class="row mb-2" id="featured"></div>
+        <div class="row mb-2" id="highlight"></div>
+      
+        <div class="row mb-2" id="posts"></div>
+      </div>
+      
+      <div class="container" id="category">
+        <div class="row mb-2" id="category-posts"></div>
+      </div>
+      
+      <div class="album py-5 bg-light" id="page">
+        <div class="container">
+          <div class="col-12" id="content"></div>
+        </div>
+      </div>
+      
+      <footer class="blog-footer">
+        <p>
+          <a href="#">Back to top</a>
+        </p>
+      </footer>
+      
+
+    </div>
+
+    
+   
     <script type="text/javascript" src="js/drawdown.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>

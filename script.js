@@ -1,50 +1,30 @@
-$("#app").load("/template/nav.html");
+var postList = posts;
 
-function getTextFilesFromFolder() {
-  var currentIndex = 0;
-  var textFiles = [];
-  var path =
-    "https://raw.githubusercontent.com/TechArcade/techarcade.github.io/main/posts/";
-  function fetchTxtFile(index) {
-    var url = path + index + ".txt";
+function extractHTMLInfo() {
+  console.log(postList);
 
-    $.ajax({
-      url: url,
-      type: "GET",
-      success: function (data) {
-        textFiles.push(data);
-        // Fetch the next file
-        fetchTxtFile(index + 1);
-      },
-      error: function (xhr) {
-        if (xhr.status === 404) {
-          // No more files found, do something with txtFiles
-          postList = extractHTMLInfo(textFiles);
-          console.log(postList);
-          Featured(postList[0]);
-          Highlight(postList[1]);
-          Highlight(postList[2]);
-          loadPosts(postList);
-        }
-      },
-    });
-  }
+     postList = sextractHTMLInfo(postList);
 
-  // Start fetching the first file
-  fetchTxtFile(currentIndex);
+Featured(postList[0]);
+Highlight(postList[1]);
+Highlight(postList[2]);
+loadPosts(postList);
 }
 
-function extractHTMLInfo(htmlList) {
+extractHTMLInfo();
+function sextractHTMLInfo(htmlList) {
   const infoList = [];
 
   for (let i = 0; i < htmlList.length; i++) {
+    
     const html = markdown(htmlList[i]);
     const doc = new DOMParser().parseFromString(html, "text/html");
     const img = doc.querySelector("img");
+    console.log(img);
     const h1 = doc.querySelector("h1");
     const p = doc.querySelector("p:nth-of-type(3)");
 
-    const small = doc.querySelector("small");
+    const small = doc.querySelector("h6");
 
     const id = i;
     const title = h1 ? h1.textContent : "";
@@ -59,7 +39,8 @@ function extractHTMLInfo(htmlList) {
 
   return infoList;
 }
-var postList = [];
+
+
 function loadPosts(list) {
   for (let i = 3; i < list.length; i++) {
     const e = list[i];
@@ -112,7 +93,7 @@ function Highlight(e) {
     ')"  class="post-link"></div>  </div></div>';
   $("#highlight").append(template);
 }
-getTextFilesFromFolder();
+
 
 function loadCategory(category) {
   $("#category-posts").html("");
@@ -164,66 +145,4 @@ function toggleElements(event, id) {
   }
 }
 
-/*
-function getTextFilesFromFolder() {
-  const folderPath = "/posts/";
-  const textFiles = [];
-  const q = 5;
-  for (let i = 0; i < q; i++) {
-    const href =
-      "https://raw.githubusercontent.com/TechArcade/techarcade.github.io/main/posts/" +
-      i +
-      ".txt";
-    if (href.endsWith(".txt")) {
-      const filePath = href;
-      console.log(href);
-      // Fetch the text file
-      $.get(filePath, function (text) {
-        textFiles.push(text);
 
-        if (i == q - 1) {
-          postList = extractHTMLInfo(textFiles);
-          console.log(postList);
-          Featured(postList[0]);
-          Highlight(postList[1]);
-          Highlight(postList[2]);
-          loadPosts(postList);
-        }
-      });
-    }
-  }
-
-  /*
-  $.ajax({
-    url: folderPath,
-    success: function (data) {
-      const links = $(data).find("a");
-      const q = links.length;
-      $(links).each(function (i) {
-        const href = $(this).attr("href");
-        if (href.endsWith(".txt")) {
-          const filePath = href;
-
-          // Fetch the text file
-          $.get(filePath, function (text) {
-            textFiles.push(text);
-
-            if (i == q - 1) {
-              postList = extractHTMLInfo(textFiles);
-              console.log(postList);
-              Featured(postList[0]);
-              Highlight(postList[1]);
-              Highlight(postList[2]);
-              loadPosts(postList);
-            }
-          });
-        }
-      });
-    },
-    error: function (error) {
-      console.error("Error loading folder:", error);
-    },
-  });
-
-  return textFiles;
-}*/
